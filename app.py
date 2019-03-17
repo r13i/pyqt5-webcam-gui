@@ -38,6 +38,19 @@ class ClickCount(object):
         return self.count
 
 
+def openCamera():
+    cap = cv2.VideoCapture(0)
+    while True:
+        ret, frame = cap.read()
+        cv2.imshow('Frame', frame)
+        if cv2.waitKey(30) & 0xFF == ord('q'):
+            break
+
+    cap.release()
+    cv2.destroyWindow('Frame')
+    return
+
+
 
 app = QApplication([])
 win = QMainWindow()
@@ -50,9 +63,31 @@ win = QMainWindow()
 
 
 central_widget = QWidget()
-button_1 = QPushButton('1st Button', central_widget)
-button_2 = QPushButton('2nd Button', central_widget)
+layout = QVBoxLayout(central_widget)
 
+count_1 = ClickCount()
+button_1 = QPushButton(str(count_1.get_count()), central_widget)
+# button_1.setGeometry(0, 0, 120, 40)
+button_1.clicked.connect(lambda _: button_1.setText(str(count_1.new_click())))
+
+count_2 = ClickCount()
+button_2 = QPushButton('2nd Button', central_widget)
+# button_2.setGeometry(0, 50, 120, 40)
+
+
+from random import randint
+button_2.clicked.connect(lambda _: button_2.setStyleSheet(
+    "background-color: rgb({}, {}, {})".format(randint(0, 255), randint(0, 255), randint(0, 255))
+    ))
+
+
+button_3 = QPushButton('Camera', central_widget)
+button_3.clicked.connect(openCamera)
+
+
+layout.addWidget(button_1)
+layout.addWidget(button_2)
+layout.addWidget(button_3)
 
 # Main windows work only if a central widget is defined in them.
 win.setCentralWidget(central_widget)

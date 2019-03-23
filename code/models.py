@@ -4,17 +4,21 @@ class Camera(object):
     def __init__(self, cam_num = 0):
         self.cam_num = cam_num
         self.cap = None
+        self.is_initialzed = False
+        self.last_frame = None
 
     def initialize(self):
         self.cap = cv2.VideoCapture(self.cam_num)
+        if not self.cap.isOpened():
+            raise Exception("Could not open video device")
+        self.is_initialzed = True
+
+    def isInitialized(self):
+        return self.is_initialzed
 
     def get_frame(self):
-        ret, self.last_frame = self.cap.read()
+        _, self.last_frame = self.cap.read()
         return self.last_frame
-
-    def acquire_movie(self, num_frames):
-        movie = []
-
 
     def set_brightness(self, value = 0.5):
         self.cap.set(cv2.CAP_PROP_BRIGHTNESS, value)
@@ -23,6 +27,7 @@ class Camera(object):
         return self.cap.get(cv2.CAP_PROP_BRIGHTNESS)
 
     def close_camera(self):
+        self.set_brightness(0.5)    # Back to 'default' brightness
         self.cap.release()
 
     def __str__(self):
@@ -34,12 +39,11 @@ if __name__ == '__main__':
     cam = Camera()
     cam.initialize()
 
-    # print(cam.get_frame().shape)
-    cam.set_brightness(0.3)
-    print(cam.get_brightness())
-
     cam.set_brightness(0.5)
     print(cam.get_brightness())
 
+    import numpy as np
+    frame = cam.get_frame()
+    print("Max pixel value: {}, Min pixel value: {}".format(np.max(frame), np.min(frame)))
 
     cam.close_camera()

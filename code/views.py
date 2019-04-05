@@ -48,11 +48,11 @@ class StartWindow(QMainWindow):
     def start(self, update_interval=30):
         if not self.camera.isInitialized():
             self.camera.initialize()
-        self.movie_thread = MovieThread(self.camera)
-        self.movie_thread.start()
-        self.acquisition_timer.start(update_interval)
         while self.camera.get_frame() is None:
             pass
+        # self.movie_thread = MovieThread(self.camera)
+        # self.movie_thread.start()
+        self.acquisition_timer.start(update_interval)
 
     def stop(self):
         self.camera.close_camera()
@@ -72,10 +72,10 @@ class StartWindow(QMainWindow):
             self.logger.info("Brightness set to: {}".format(value))
 
 
-class MovieThread(QThread):
-    def __init__(self, camera):
-        super().__init__()
-        self.camera = camera
+# class MovieThread(QThread):
+#     def __init__(self, camera):
+#         super().__init__()
+#         self.camera = camera
 
-    def run(self):
-        self.camera.get_frame() #####################################
+#     def run(self):
+#         self.camera.get_frame() #####################################
